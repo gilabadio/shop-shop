@@ -22,21 +22,16 @@ function ProductList() {
   const { loading, data } = useQuery(QUERY_PRODUCTS);
 
   useEffect(() => {
-    // when there is data to be stored
     if (data) {
-      // store in the global state object
       dispatch({
         type: UPDATE_PRODUCTS,
         products: data.products
       });
-      // and store it in IndexedDB
       data.products.forEach((product) => {
         idbPromise('products', 'put', product);
       });
     } else if (!loading) {
-      // if loading is undefined, the user is offline - get data from the `products` store in IndexedDB
       idbPromise('products', 'get').then((products) => {
-        // use the IndexedDB data to set the global state for offline browsing
         dispatch({
           type: UPDATE_PRODUCTS,
           products: products
